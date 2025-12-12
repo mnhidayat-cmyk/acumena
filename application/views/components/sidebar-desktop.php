@@ -1,0 +1,52 @@
+<aside class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0">
+  <div class="py-4 text-gray-500 dark:text-gray-400">
+    <a class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href=" <?= base_url() ?>">
+      <img src="<?= base_url('assets/img/acumena-logo.png') ?>" alt="Acumena" id="logo-brand" class="dark:hidden"
+      />
+      <img src="<?= base_url('assets/img/acumena-logo-dark.png') ?>" alt="Acumena" id="logo-brand"
+      class="hidden dark:block" />
+    </a>
+    <?php
+    $menus = [
+        [
+          'uri'=> 'dashboard',
+          'label' => 'Dashboard',
+          'icon' => '<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>'
+        ],
+        [
+          'uri' => 'project',
+          'label' => 'Projects',
+          'icon' => '<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />'
+        ],
+        [
+          'uri' => 'subscription',
+          'label' => 'Subscriptions',
+          'icon' => '<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />'
+        ],
+      ];
+    
+    $current = $this->uri->segment(1);
+    ?>
+      <ul class="mt-6">
+        <?php foreach ($menus as $m): $active=$current==$m['uri']; ?>
+          <li class="relative px-6 py-3">
+            <?php if ($active): ?>
+              <span class="absolute inset-y-0 left-0 w-1 bg-blue-500 rounded-tr-lg rounded-br-lg"
+              aria-hidden="true">
+              </span>
+              <?php endif; ?>
+                <a href="<?= base_url($m['uri']) ?>" class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150
+                <?= $active ? 'text-gray-800 dark:text-gray-100 hover:text-gray-800 dark:hover:text-gray-200' : '' ?>">
+                  <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                  stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                    <?= $m['icon'] ?>
+                  </svg>
+                  <span class="ml-4">
+                    <?= $m['label'] ?>
+                  </span>
+                </a>
+          </li>
+          <?php endforeach; ?>
+      </ul>
+  </div>
+</aside>

@@ -1,0 +1,104 @@
+.gradient-primary {
+  background: linear-gradient(
+    33deg,
+    rgba(38, 11, 173, 1),
+    rgba(89, 199, 222, 1)
+  );
+  background-size: 200% 200%;
+  transition: all 0.5s ease-in-out;
+}
+
+.gradient-primary:hover {
+  background-position: right center;
+}
+
+#logo-brand {
+  margin-top: -30px;
+  width: 200px;
+  padding: 10px 20px;
+}
+.btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  /* display: inline-block; */
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+.btn-block {
+  width: 100%;
+  display: block;
+}
+
+.btn-danger {
+  background-color: #e02424;
+  transition: all 0.5s ease-in-out;
+}
+.btn-danger:hover {
+  background-color: #c01a1a;
+}
+.btn-warning {
+  background-color: #ffd54d;
+  transition: all 0.5s ease-in-out;
+}
+.btn-warning:hover {
+  background-color: #f59e0b;
+}
+.btn-success {
+  background-color: #4caf50;
+  transition: all 0.5s ease-in-out;
+}
+.btn-success:hover {
+  background-color: #388e3c;
+}
+.btn-primary {
+  background-color: #260bad;
+  transition: all 0.5s ease-in-out;
+}
+.btn-primary:hover {
+  background-color: #5ebdd7;
+}
+.btn-soft-primary {
+  background-color: rgba(55, 125, 255, 0.2);
+  color: #260bad;
+  transition: all 0.5s ease-in-out;
+}
+.btn-soft-primary:hover {
+  background-color: rgba(55, 125, 255, 0.5);
+}
+.dashboard-project-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: #260bad;
+  background: linear-gradient(
+    100deg,
+    rgba(38, 11, 173, 0) 0%,
+    rgba(38, 11, 173, 1) 73%
+  );
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: all 0.5s ease-in-out;
+}
+.dashboard-project-card-overlay:hover {
+  background: #5ebdd7;
+  background-position: right center;
+}
+.project-btn-change-view:focus {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}

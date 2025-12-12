@@ -1,0 +1,34 @@
+[
+	{
+		"id": 1,
+		"title": "Project Title 1",
+		"url": "http://acumena.test/project/open/1",
+		"text_except": "Sevencols menyediakan berbagai macam jenis pakaian dengan customisasi...",
+		"date_created": "Sept, 5 2025",
+		"last_updated": "Sept, 5 2025"
+	},
+	{
+		"id": 2,
+		"title": "Project Title 2",
+		"url": "http://acumena.test/project/open/2",
+		"text_except": "Sevencols menyediakan berbagai macam jenis pakaian dengan customisasi...",
+		"date_created": "Sept, 5 2025",
+		"last_updated": "Sept, 5 2025"
+	},
+	{
+		"id": 3,
+		"title": "Project Title 3",
+		"url": "http://acumena.test/project/open/3",
+		"text_except": "Sevencols menyediakan berbagai macam jenis pakaian dengan customisasi...",
+		"date_created": "Sept, 5 2025",
+		"last_updated": "Sept, 5 2025"
+	},
+	{
+		"id": 4,
+		"title": "Project Title 4",
+		"url": "http://acumena.test/project/open/4",
+		"text_except": "Sevencols menyediakan berbagai macam jenis pakaian dengan customisasi...",
+		"date_created": "Sept, 5 2025",
+		"last_updated": "Sept, 5 2025"
+	}
+]
