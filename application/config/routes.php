@@ -64,6 +64,7 @@ $route['api/project/prioritized-strategies'] = 'api_project/prioritized_strategi
 
 // Strategic Recommendation (NEW)
 $route['api/project/generate-strategic-recommendation'] = 'api_project/generate_strategic_recommendation';
+$route['api/project/get-recommendation'] = 'api_project/get_recommendation';
 $route['api/project/save-recommendation'] = 'api_project/save_recommendation';
 
 // Validate Strategies (NEW)

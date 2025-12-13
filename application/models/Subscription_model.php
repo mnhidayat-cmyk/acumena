@@ -11,7 +11,7 @@ class Subscription_model extends CI_Model {
      */
     public function get_all($is_deleted = 0){
         $this->db->select('*');
-        $this->db->from('subscriptions');
+        $this->db->from('m_subscription_plans');
         $this->db->where('is_deleted', $is_deleted);
         $query = $this->db->get();
         return $query->result();
@@ -23,7 +23,7 @@ class Subscription_model extends CI_Model {
     public function get_subscription($subscription_id)
     {
         $this->db->where('id', $subscription_id);
-        $query = $this->db->get('subscriptions');
+        $query = $this->db->get('m_subscription_plans');
         return $query->row();
     }
 
@@ -78,9 +78,9 @@ class Subscription_model extends CI_Model {
 
     // Get User Active Subscription with data from user_subscription_history
     public function get_user_active_subscription($user_id){
-        $this->db->select('user_subscription_history.*, subscriptions.name AS subscription_name, subscriptions.price_monthly');
+        $this->db->select('user_subscription_history.*, m_subscription_plans.name AS subscription_name, m_subscription_plans.price_monthly');
         $this->db->from('user_subscription_history');
-        $this->db->join('subscriptions', 'subscriptions.id = user_subscription_history.subscription_id', 'inner');
+        $this->db->join('m_subscription_plans', 'm_subscription_plans.id = user_subscription_history.subscription_id', 'inner');
         $this->db->where('user_subscription_history.user_id', $user_id);
         $this->db->where('user_subscription_history.is_active', 1);
         $query = $this->db->get();
@@ -89,9 +89,9 @@ class Subscription_model extends CI_Model {
 
     // Get User Invoice History with data from user_subscription_history
     public function get_user_invoice_history($user_id){
-        $this->db->select('user_subscription_history.*, subscriptions.name AS subscription_name, subscriptions.price_monthly');
+        $this->db->select('user_subscription_history.*, m_subscription_plans.name AS subscription_name, m_subscription_plans.price_monthly');
         $this->db->from('user_subscription_history');
-        $this->db->join('subscriptions', 'subscriptions.id = user_subscription_history.subscription_id', 'inner');
+        $this->db->join('m_subscription_plans', 'm_subscription_plans.id = user_subscription_history.subscription_id', 'inner');
         $this->db->where('user_subscription_history.user_id', $user_id);
         $query = $this->db->get();
         return $query->result();
@@ -140,5 +140,85 @@ class Subscription_model extends CI_Model {
             $this->db->insert('user_subscription_history', $data);
         }
         return count($expired);
+    }
+
+    /**
+     * Get current month AI generation usage for a user
+     * 
+     * @param int $user_id
+     * @return int Total usage count for current month
+     */
+    public function get_current_month_usage($user_id)
+    {
+        $first_day = date('Y-m-01 00:00:00');
+        $last_day = date('Y-m-t 23:59:59');
+        
+        $this->db->select('COUNT(*) as total');
+        $this->db->from('subscription_usage');
+        $this->db->where('user_id', $user_id);
+        $this->db->where('quota_impact', 1);
+        $this->db->where('created_at >=', $first_day);
+        $this->db->where('created_at <=', $last_day);
+        
+        $query = $this->db->get();
+        $result = $query->row();
+        
+        return $result ? (int)$result->total : 0;
+    }
+
+    /**
+     * Get AI generation usage for a specific project
+     * 
+     * @param int $project_id
+     * @return int Total usage count for project
+     */
+    public function get_project_usage($project_id)
+    {
+        $this->db->select('COUNT(*) as total');
+        $this->db->from('subscription_usage');
+        $this->db->where('project_id', $project_id);
+        
+        $query = $this->db->get();
+        $result = $query->row();
+        
+        return $result ? (int)$result->total : 0;
+    }
+
+    /**
+     * Record AI generation usage
+     * 
+     * @param int $user_id
+     * @param int $project_id
+     * @param string $type (strategy|recommendation|custom)
+     * @param string $provider (gemini|sumopod)
+     * @param int $quota_impact (1 if counts against quota, 0 if free)
+     * @return bool
+     */
+    public function increment_usage($user_id, $project_id, $type = 'strategy', $provider = 'gemini', $quota_impact = 0)
+    {
+        $data = [
+            'user_id' => $user_id,
+            'project_id' => $project_id,
+            'usage_type' => $type,
+            'api_provider' => $provider,
+            'quota_impact' => $quota_impact,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        
+        return $this->db->insert('subscription_usage', $data);
+    }
+
+    /**
+     * Get subscription plan by ID with all columns
+     * 
+     * @param int $subscription_id
+     * @return array|null
+     */
+    public function get_subscription_by_id($subscription_id)
+    {
+        $this->db->where('id', $subscription_id);
+        $this->db->where('is_deleted', null);
+        $query = $this->db->get('m_subscription_plans');
+        return $query->row_array();
     }
 }

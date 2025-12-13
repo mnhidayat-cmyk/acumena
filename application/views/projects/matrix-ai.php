@@ -302,7 +302,7 @@
             </div>
         </div>
 
-        <div class="mt-4 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+        <div class="mt-4 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg" id="finalRecommendationsContainer">
             <div class="p-4 flex flex-col items-center justify-center text-center">
                         <svg xmlns="http://www.w3.org/2000/svg" 
                             width="60" height="60" viewBox="0 0 24 24" 
@@ -328,6 +328,296 @@
             </a>
 
 <script>
+// Global functions for recommendation handling
+async function saveRecommendationToDatabase() {
+    if (!window.currentRecommendation) {
+        alert('Tidak ada rekomendasi untuk disimpan');
+        return;
+    }
+
+    // Rekomendasi sudah disimpan otomatis saat generate
+    alert('✅ Rekomendasi sudah tersimpan otomatis ke database saat Anda mengklik "Generate Recommendations"!');
+}
+
+function downloadRecommendation() {
+    if (!window.currentRecommendation) {
+        alert('Tidak ada rekomendasi untuk diunduh');
+        return;
+    }
+
+    try {
+        const rec = window.currentRecommendation.recommendation;
+        const company = window.currentRecommendation.company_profile;
+        
+        // Format content untuk download
+        let content = `
+REKOMENDASI STRATEGI FINAL
+==========================
+Tanggal: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+
+PROFIL PERUSAHAAN
+================
+Nama: ${company?.company_name || '-'}
+Industri: ${company?.industry || '-'}
+Visi: ${company?.vision || '-'}
+Misi: ${company?.mission || '-'}
+
+POSISI IE MATRIX
+================
+Kuadran: ${window.currentRecommendation.ie_matrix_position?.quadrant || '-'}
+Skor IFE: ${(window.currentRecommendation.ie_matrix_position?.ife_score || 0).toFixed(2)}
+Skor EFE: ${(window.currentRecommendation.ie_matrix_position?.efe_score || 0).toFixed(2)}
+
+TEMA STRATEGIS UTAMA
+===================
+${rec?.strategic_theme || '-'}
+
+KESESUAIAN DENGAN POSISI PERUSAHAAN
+==================================
+${rec?.alignment_with_position || '-'}
+
+TINDAKAN JANGKA PENDEK (3-6 BULAN)
+==================================`;
+
+        if (Array.isArray(rec?.short_term_actions)) {
+            rec.short_term_actions.forEach((action, idx) => {
+                content += `\n${idx + 1}. ${action.action || '-'}`;
+                if (action.priority) content += `\n   Prioritas: ${action.priority}`;
+                if (action.impact) content += `\n   Dampak: ${action.impact}`;
+            });
+        }
+
+        content += `\n\nINISIATIF JANGKA PANJANG (1-3 TAHUN)
+==================================`;
+        
+        if (Array.isArray(rec?.long_term_actions)) {
+            rec.long_term_actions.forEach((initiative, idx) => {
+                content += `\n${idx + 1}. ${initiative.initiative || initiative.action || '-'}`;
+                if (initiative.resources) content += `\n   Sumber Daya: ${initiative.resources}`;
+                if (initiative.success_metrics) content += `\n   Metrik Sukses: ${initiative.success_metrics}`;
+            });
+        }
+
+        content += `\n\nIMPLIKASI SUMBER DAYA
+====================`;
+        if (rec?.resource_implications) {
+            if (rec.resource_implications.budget_allocation) {
+                content += `\nAlokasi Anggaran: ${rec.resource_implications.budget_allocation}`;
+            }
+            if (rec.resource_implications.key_roles) {
+                content += `\nPeran Kunci: ${rec.resource_implications.key_roles}`;
+            }
+            if (rec.resource_implications.skill_development) {
+                content += `\nPengembangan Skill: ${rec.resource_implications.skill_development}`;
+            }
+        }
+
+        content += `\n\nMITIGASI RISIKO
+===============`;
+        if (Array.isArray(rec?.risk_mitigation)) {
+            rec.risk_mitigation.forEach((risk, idx) => {
+                content += `\n${idx + 1}. Risiko: ${risk.risk || '-'}`;
+                if (risk.mitigation) content += `\n   Mitigasi: ${risk.mitigation}`;
+            });
+        }
+
+        // Download file
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+        element.setAttribute('download', `Strategic-Recommendation-${company?.company_name || 'Report'}-${new Date().getTime()}.txt`);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+
+        alert('✅ Rekomendasi berhasil diunduh!');
+    } catch (error) {
+        console.error('Error downloading recommendation:', error);
+        alert('❌ Error download: ' + error.message);
+    }
+}
+
+/**
+ * Format actions as HTML
+ */
+function formatActionsHTML(actions, isLongTerm = false) {
+    if (!Array.isArray(actions) || actions.length === 0) {
+        return '<p class="text-gray-600 dark:text-gray-400 italic">Tidak ada tindakan spesifik yang didefinisikan.</p>';
+    }
+
+    let html = '<div class="space-y-3">';
+    actions.forEach((item, idx) => {
+        if (isLongTerm) {
+            html += `
+                <div class="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 p-4">
+                    <p class="font-semibold text-gray-900 dark:text-white">${idx + 1}. ${item.initiative || item.action}</p>
+                    ${item.resources ? `<p class="text-sm text-gray-700 dark:text-gray-300 mt-1"><strong>Sumber Daya:</strong> ${item.resources}</p>` : ''}
+                    ${item.success_metrics ? `<p class="text-sm text-gray-700 dark:text-gray-300"><strong>Metrik Sukses:</strong> ${item.success_metrics}</p>` : ''}
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 p-4">
+                    <p class="font-semibold text-gray-900 dark:text-white">${idx + 1}. ${item.action}</p>
+                    ${item.priority ? `<p class="text-sm text-gray-700 dark:text-gray-300 mt-1"><strong>Prioritas:</strong> <span class="font-medium">${item.priority}</span></p>` : ''}
+                    ${item.impact ? `<p class="text-sm text-gray-700 dark:text-gray-300"><strong>Dampak:</strong> ${item.impact}</p>` : ''}
+                </div>
+            `;
+        }
+    });
+    html += '</div>';
+    return html;
+}
+
+/**
+ * Format risks as HTML
+ */
+function formatRisksHTML(risks) {
+    if (!Array.isArray(risks) || risks.length === 0) {
+        return '<p class="text-gray-600 dark:text-gray-400 italic">Tidak ada risiko besar yang teridentifikasi.</p>';
+    }
+
+    let html = '<div class="space-y-3">';
+    risks.forEach((item, idx) => {
+        html += `
+            <div class="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4">
+                <p class="font-semibold text-gray-900 dark:text-white">${idx + 1}. Risiko: ${item.risk}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-1"><strong>Mitigasi:</strong> ${item.mitigation}</p>
+            </div>
+        `;
+    });
+    html += '</div>';
+    return html;
+}
+
+/**
+ * Display Final Strategic Recommendation in structured format
+ */
+function displayFinalRecommendation(data) {
+    const rec = data.recommendation;
+    
+    // Build HTML structure for display
+    const recommendationDiv = document.createElement('div');
+    recommendationDiv.className = 'p-6 bg-white dark:bg-gray-900 rounded-lg';
+    recommendationDiv.innerHTML = `
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">📊 REKOMENDASI STRATEGI FINAL</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Perusahaan</p>
+                    <p class="font-semibold text-gray-900 dark:text-white">${data.company_profile?.company_name || '-'}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Industri</p>
+                    <p class="font-semibold text-gray-900 dark:text-white">${data.company_profile?.industry || '-'}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Posisi IE Matrix</p>
+                    <p class="font-semibold text-gray-900 dark:text-white">${data.ie_matrix_position?.quadrant || '-'}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Skor IFE / EFE</p>
+                    <p class="font-semibold text-gray-900 dark:text-white">${(data.ie_matrix_position?.ife_score || 0).toFixed(2)} / ${(data.ie_matrix_position?.efe_score || 0).toFixed(2)}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">🎯 Tema Strategis Utama</h3>
+                <p class="text-gray-700 dark:text-gray-300">${rec.strategic_theme || '-'}</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">🔗 Kesesuaian dengan Posisi Perusahaan</h3>
+                <p class="text-gray-700 dark:text-gray-300">${rec.alignment_with_position || '-'}</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">⚡ Tindakan Jangka Pendek (3-6 Bulan)</h3>
+                ${formatActionsHTML(rec.short_term_actions)}
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">🚀 Inisiatif Jangka Panjang (1-3 Tahun)</h3>
+                ${formatActionsHTML(rec.long_term_actions, true)}
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">💰 Implikasi Sumber Daya</h3>
+                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-3">
+                    <div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Alokasi Anggaran</p>
+                        <p class="text-gray-900 dark:text-white">${rec.resource_implications?.budget_allocation || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Peran Kunci yang Diperlukan</p>
+                        <p class="text-gray-900 dark:text-white">${rec.resource_implications?.key_roles || '-'}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Area Pengembangan Skill</p>
+                        <p class="text-gray-900 dark:text-white">${rec.resource_implications?.skill_development || '-'}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">⚠️ Mitigasi Risiko</h3>
+                ${formatRisksHTML(rec.risk_mitigation)}
+            </div>
+
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <p class="text-sm text-green-600 font-semibold">✅ Tersimpan ke Database</p>
+                </div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Dihasilkan: ${new Date().toLocaleDateString('id-ID', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                })}</p>
+            </div>
+        </div>
+    `;
+
+    // Replace placeholder with recommendation display
+    const container = document.getElementById('finalRecommendationsContainer');
+    if (container) {
+        container.innerHTML = '';
+        container.appendChild(recommendationDiv);
+    }
+
+    // Store recommendation data globally for saving
+    window.currentRecommendation = data;
+}
+
+// Auto-load final recommendation from database if it exists
+async function loadFinalRecommendation(projectUuid) {
+    if (!projectUuid) {
+        console.log('No project UUID - skipping final recommendation load');
+        return;
+    }
+    
+    try {
+        const apiBase = '<?= base_url('api/project') ?>';
+        const response = await fetch(`${apiBase}/get-recommendation?uuid=${projectUuid}`);
+        const json = await response.json();
+        
+        if (json.success && json.found && json.data) {
+            console.log('✅ Final recommendation found - auto-displaying');
+            displayFinalRecommendation(json.data);
+        } else {
+            console.log('No final recommendation in database yet');
+        }
+    } catch (e) {
+        console.warn('Failed to load final recommendation:', e);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // SO/ST/WO/WT buttons and lists
     const btnSO = document.getElementById('generateSOBtn');
@@ -360,13 +650,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function resolveProjectId() {
         try {
-            if (!projectKey) return null;
+            if (!projectKey) {
+                console.error('Project key tidak ditemukan di URL (parameter ?key=)');
+                return null;
+            }
+            console.log('Resolving project ID for key:', projectKey);
             const resp = await fetch(`${apiBase}/profile_get?uuid=${projectKey}`);
             const json = await resp.json();
             projectId = json?.data?.id || json?.data?.project_id || null;
+            if (projectId) {
+                console.log('✅ Project ID resolved:', projectId);
+            } else {
+                console.warn('⚠️ Could not resolve project ID from response:', json);
+            }
             return projectId;
         } catch (e) {
-            console.error('Gagal memuat project ID:', e);
+            console.error('❌ Gagal memuat project ID:', e);
             return null;
         }
     }
@@ -539,11 +838,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Memuat strategi yang sudah ada saat halaman diload (tanpa efek ketik)
     async function loadExisting(quadrant, btnEl, placeholderEl, listEl) {
         try {
-            if (!projectId) return;
-            const res = await fetch(`${apiBase}/strategies_list?project=${projectId}&pair_type=${mapTypeGlobal[quadrant]}`);
+            if (!projectId) {
+                console.warn(`loadExisting: projectId not set for ${quadrant}`);
+                return;
+            }
+            
+            const pairType = mapTypeGlobal[quadrant];
+            const url = `${apiBase}/strategies_list?project=${projectId}&pair_type=${pairType}`;
+            console.log(`Loading existing strategies for ${quadrant} (${pairType}) from:`, url);
+            
+            const res = await fetch(url);
+            if (!res.ok) {
+                console.warn(`strategies_list API returned status ${res.status} for ${quadrant}`);
+                return;
+            }
+            
             const json = await res.json();
+            console.log(`Response for ${quadrant}:`, json);
+            
+            // Endpoint returns: { success: true, message: '...', data: { run_id, stage, pair_type, strategies: [] } }
             const strategies = json?.data?.strategies || [];
+            
             if (json.success && Array.isArray(strategies) && strategies.length > 0) {
+                console.log(`Found ${strategies.length} existing strategies for ${quadrant}`);
                 const items = strategies.map((s, idx) => {
                     const rawCode = typeof s.code === 'string' ? s.code : '';
                     const m = rawCode.match(/^(SO|ST|WO|WT)(\d+)/i);
@@ -554,10 +871,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 placeholderEl.style.display = 'none';
                 listEl.style.display = 'block';
                 renderStrategiesImmediate(listEl, items, btnEl);
+                console.log(`✅ Rendered ${items.length} strategies for ${quadrant}`);
+            } else {
+                console.log(`No strategies found for ${quadrant} - keeping placeholder visible`);
             }
         } catch (e) {
             // Abaikan kesalahan, user masih bisa generate
-            console.warn('Gagal memuat strategi existing untuk', quadrant, e);
+            console.warn(`Gagal memuat strategi existing untuk ${quadrant}:`, e);
         }
     }
 
@@ -569,7 +889,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Resolusi project dan muat strategi existing
     // Load all 4 strategies in PARALLEL for better performance
     resolveProjectId().then(() => {
-        if (!projectId) return;
+        if (!projectId) {
+            console.error('❌ Gagal resolve projectId - strategi tidak bisa dimuat');
+            return;
+        }
+        
+        console.log('🔄 Starting to load existing strategies for all 4 quadrants...');
         
         // Load all 4 in parallel (faster than sequential)
         Promise.all([
@@ -579,10 +904,14 @@ document.addEventListener('DOMContentLoaded', function() {
             loadExisting('WT', btnWT, phWT, listWT)
         ]).then(() => {
             // All strategies loaded
-            console.log('All strategies loaded successfully');
+            console.log('✅ All strategies loaded successfully');
+            
+            // Also auto-load final recommendation if exists
+            console.log('🔄 Attempting to load final recommendation...');
+            loadFinalRecommendation(projectKey);
         }).catch(e => {
             // If any fail, they're handled individually in loadExisting()
-            console.warn('Some strategies failed to load:', e);
+            console.warn('⚠️ Some strategies failed to load:', e);
         });
     });
 
@@ -771,6 +1100,84 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     const generateRecommendationsBtn = document.getElementById('generateRecommendationsBtn');
     
+    // Helper function to calculate matrix scores
+    async function calculateMatrixScores(projectKey) {
+        try {
+            console.log('📊 Calculating IFE and EFE scores...');
+            
+            // Fetch IFE Matrix data
+            const ifeResponse = await fetch(`${apiBase}/matrix_ife_get?key=${projectKey}`);
+            const ifeJson = await ifeResponse.json();
+            
+            let ifeScore = 0;
+            if (ifeJson.success && ifeJson.data) {
+                const strengths = ifeJson.data.strengths || [];
+                const weaknesses = ifeJson.data.weaknesses || [];
+                let totalScore = 0;
+                
+                // Calculate IFE score: weight * rating for each factor
+                strengths.forEach(s => {
+                    totalScore += (s.weight || 0) * (s.rating || 0);
+                });
+                weaknesses.forEach(w => {
+                    totalScore += (w.weight || 0) * (w.rating || 0);
+                });
+                
+                ifeScore = totalScore;
+                console.log('✅ IFE Score calculated:', ifeScore.toFixed(2));
+            }
+            
+            // Fetch EFE Matrix data
+            const efeResponse = await fetch(`${apiBase}/matrix_efe_get?key=${projectKey}`);
+            const efeJson = await efeResponse.json();
+            
+            let efeScore = 0;
+            if (efeJson.success && efeJson.data) {
+                const opportunities = efeJson.data.opportunities || [];
+                const threats = efeJson.data.threats || [];
+                let totalScore = 0;
+                
+                // Calculate EFE score: weight * rating for each factor
+                opportunities.forEach(o => {
+                    totalScore += (o.weight || 0) * (o.rating || 0);
+                });
+                threats.forEach(t => {
+                    totalScore += (t.weight || 0) * (t.rating || 0);
+                });
+                
+                efeScore = totalScore;
+                console.log('✅ EFE Score calculated:', efeScore.toFixed(2));
+            }
+            
+            // Determine quadrant based on scores
+            // Scale scores to 0-4 range (typical IE Matrix scale)
+            const scaledIFE = ifeScore / 2.0;  // Assuming max possible is 4.0
+            const scaledEFE = efeScore / 2.0;
+            
+            let quadrant = 'UNKNOWN';
+            if (scaledIFE >= 2.0 && scaledEFE >= 2.0) {
+                quadrant = 'I'; // Grow and Build
+            } else if (scaledIFE < 2.0 && scaledEFE >= 2.0) {
+                quadrant = 'II'; // Hold and Maintain
+            } else if (scaledIFE < 2.0 && scaledEFE < 2.0) {
+                quadrant = 'III'; // Harvest or Divest
+            } else if (scaledIFE >= 2.0 && scaledEFE < 2.0) {
+                quadrant = 'IV'; // Retrench
+            }
+            
+            console.log('✅ Quadrant determined:', quadrant);
+            
+            return {
+                ife_score: ifeScore,
+                efe_score: efeScore,
+                quadrant: quadrant
+            };
+        } catch (error) {
+            console.error('❌ Error calculating scores:', error);
+            throw new Error('Gagal menghitung skor IFE dan EFE: ' + error.message);
+        }
+    }
+    
     if (generateRecommendationsBtn) {
         generateRecommendationsBtn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -783,17 +1190,28 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const projectUuid = new URLSearchParams(window.location.search).get('key');
+            const containerEl = document.getElementById('finalRecommendationsContainer');
             
             generateRecommendationsBtn.disabled = true;
             const originalText = generateRecommendationsBtn.innerHTML;
             generateRecommendationsBtn.innerHTML = '<span class="spinner">Analyzing...</span> Generating Final Strategic Recommendation...';
             
+            // Show loading state in container
+            if (containerEl) {
+                placeholderSetLoading(containerEl, 'Menganalisis data matrix dan strategi');
+            }
+            
             try {
-                // Get IFE/EFE scores and IE Matrix position from page
-                const ifeScore = document.querySelector('[data-ife-score]')?.getAttribute('data-ife-score') || null;
-                const efeScore = document.querySelector('[data-efe-score]')?.getAttribute('data-efe-score') || null;
-                const quadrant = document.querySelector('[data-quadrant]')?.getAttribute('data-quadrant') || null;
+                // Calculate IFE/EFE scores and determine quadrant
+                console.log('🔄 Starting to calculate matrix scores...');
+                const matrixData = await calculateMatrixScores(projectUuid);
                 
+                // Update loading message to show next step
+                if (containerEl) {
+                    placeholderSetLoading(containerEl, 'Menghasilkan rekomendasi strategis');
+                }
+                
+                console.log('📤 Sending to generate-strategic-recommendation endpoint...');
                 // Call new endpoint for Final Strategic Recommendation
                 const response = await fetch('/api/project/generate-strategic-recommendation', {
                     method: 'POST',
@@ -802,9 +1220,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({
                         project_uuid: projectUuid,
-                        ife_score: parseFloat(ifeScore),
-                        efe_score: parseFloat(efeScore),
-                        quadrant: quadrant
+                        ife_score: matrixData.ife_score,
+                        efe_score: matrixData.efe_score,
+                        quadrant: matrixData.quadrant
                     })
                 });
 
@@ -812,6 +1230,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (json.success && json.data.recommendation) {
                     // Display comprehensive Final Strategic Recommendation
+                    console.log('✅ Recommendation generated successfully');
                     displayFinalRecommendation(json.data);
                 } else {
                     throw new Error(json.message || 'Failed to generate recommendation');
@@ -819,341 +1238,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             } catch (error) {
                 console.error('Error generating recommendation:', error);
+                if (containerEl) {
+                    placeholderSetError(containerEl, 'Gagal membuat rekomendasi: ' + error.message);
+                }
                 alert('Error: ' + error.message);
             } finally {
                 generateRecommendationsBtn.disabled = false;
                 generateRecommendationsBtn.innerHTML = originalText;
             }
         });
-    }
+    }});
 
-    /**
-     * Display Final Strategic Recommendation in structured format
-     */
-    function displayFinalRecommendation(data) {
-        const rec = data.recommendation;
-        
-        // Build HTML structure for display
-        const recommendationDiv = document.createElement('div');
-        recommendationDiv.className = 'p-6 bg-white dark:bg-gray-900 rounded-lg';
-        recommendationDiv.innerHTML = `
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">📊 REKOMENDASI STRATEGI FINAL</h2>
-                
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Perusahaan</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">${data.company_profile?.company_name || '-'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Industri</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">${data.company_profile?.industry || '-'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Posisi IE Matrix</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">${data.ie_matrix_position?.quadrant || '-'}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Skor IFE / EFE</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">${(data.ie_matrix_position?.ife_score || 0).toFixed(2)} / ${(data.ie_matrix_position?.efe_score || 0).toFixed(2)}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">🎯 Tema Strategis Utama</h3>
-                    <p class="text-gray-700 dark:text-gray-300">${rec.strategic_theme || '-'}</p>
-                </div>
-
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">🔗 Kesesuaian dengan Posisi Perusahaan</h3>
-                    <p class="text-gray-700 dark:text-gray-300">${rec.alignment_with_position || '-'}</p>
-                </div>
-
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">⚡ Tindakan Jangka Pendek (3-6 Bulan)</h3>
-                    ${formatActionsHTML(rec.short_term_actions)}
-                </div>
-
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">🚀 Inisiatif Jangka Panjang (1-3 Tahun)</h3>
-                    ${formatActionsHTML(rec.long_term_actions, true)}
-                </div>
-
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">💰 Implikasi Sumber Daya</h3>
-                    <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-3">
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Alokasi Anggaran</p>
-                            <p class="text-gray-900 dark:text-white">${rec.resource_implications?.budget_allocation || '-'}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Peran Kunci yang Diperlukan</p>
-                            <p class="text-gray-900 dark:text-white">${rec.resource_implications?.key_roles || '-'}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Area Pengembangan Skill</p>
-                            <p class="text-gray-900 dark:text-white">${rec.resource_implications?.skill_development || '-'}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">⚠️ Mitigasi Risiko</h3>
-                    ${formatRisksHTML(rec.risk_mitigation)}
-                </div>
-
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Dihasilkan: ${new Date().toLocaleDateString('id-ID', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                    })}</p>
-                </div>
-            </div>
-
-            <div class="flex gap-3 mt-6">
-                <button onclick="saveRecommendationToDatabase()" class="btn gradient-primary">
-                    💾 Simpan ke Database
-                </button>
-                <button onclick="downloadRecommendation()" class="btn btn-outline">
-                    📥 Download PDF
-                </button>
-            </div>
-        `;
-
-        // Replace placeholder with recommendation display
-        const placeholderContainer = document.querySelector('[class*="flex flex-col items-center justify-center text-center"]')?.parentElement;
-        if (placeholderContainer) {
-            placeholderContainer.innerHTML = '';
-            placeholderContainer.appendChild(recommendationDiv);
-        }
-
-        // Store recommendation data globally for saving
-        window.currentRecommendation = data;
-    }
-
-    /**
-     * Format actions as HTML
-     */
-    function formatActionsHTML(actions, isLongTerm = false) {
-        if (!Array.isArray(actions) || actions.length === 0) {
-            return '<p class="text-gray-600 dark:text-gray-400 italic">Tidak ada tindakan spesifik yang didefinisikan.</p>';
-        }
-
-        let html = '<div class="space-y-3">';
-        actions.forEach((item, idx) => {
-            if (isLongTerm) {
-                html += `
-                    <div class="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 p-4">
-                        <p class="font-semibold text-gray-900 dark:text-white">${idx + 1}. ${item.initiative || item.action}</p>
-                        ${item.resources ? `<p class="text-sm text-gray-700 dark:text-gray-300 mt-1"><strong>Sumber Daya:</strong> ${item.resources}</p>` : ''}
-                        ${item.success_metrics ? `<p class="text-sm text-gray-700 dark:text-gray-300"><strong>Metrik Sukses:</strong> ${item.success_metrics}</p>` : ''}
-                    </div>
-                `;
-            } else {
-                html += `
-                    <div class="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 p-4">
-                        <p class="font-semibold text-gray-900 dark:text-white">${idx + 1}. ${item.action}</p>
-                        ${item.priority ? `<p class="text-sm text-gray-700 dark:text-gray-300 mt-1"><strong>Prioritas:</strong> <span class="font-medium">${item.priority}</span></p>` : ''}
-                        ${item.impact ? `<p class="text-sm text-gray-700 dark:text-gray-300"><strong>Dampak:</strong> ${item.impact}</p>` : ''}
-                    </div>
-                `;
-            }
-        });
-        html += '</div>';
-        return html;
-    }
-
-    /**
-     * Format risks as HTML
-     */
-    function formatRisksHTML(risks) {
-        if (!Array.isArray(risks) || risks.length === 0) {
-            return '<p class="text-gray-600 dark:text-gray-400 italic">Tidak ada risiko besar yang teridentifikasi.</p>';
-        }
-
-        let html = '<div class="space-y-3">';
-        risks.forEach((item, idx) => {
-            html += `
-                <div class="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4">
-                    <p class="font-semibold text-gray-900 dark:text-white">${idx + 1}. Risiko: ${item.risk}</p>
-                    <p class="text-sm text-gray-700 dark:text-gray-300 mt-1"><strong>Mitigasi:</strong> ${item.mitigation}</p>
-                </div>
-            `;
-        });
-        html += '</div>';
-        return html;
-    }
-
-    /**
-     * Save recommendation to database
-     */
-    async function saveRecommendationToDatabase() {
-        if (!window.currentRecommendation) {
-            alert('Tidak ada rekomendasi untuk disimpan');
-            return;
-        }
-
-        const projectUuid = new URLSearchParams(window.location.search).get('key');
-        if (!projectUuid) {
-            alert('Project UUID tidak ditemukan');
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/project/save-recommendation', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    project_uuid: projectUuid,
-                    recommendation: window.currentRecommendation
-                })
-            });
-
-            const json = await response.json();
-            if (json.success) {
-                alert('✅ Rekomendasi berhasil disimpan ke database!');
-            } else {
-                alert('❌ Gagal menyimpan: ' + (json.message || 'Error tidak diketahui'));
-            }
-        } catch (error) {
-            console.error('Error saving recommendation:', error);
-            alert('❌ Error: ' + error.message);
-        }
-    }
-
-    /**
-     * Download recommendation as PDF (placeholder)
-     */
-    function downloadRecommendation() {
-        alert('Fitur Download PDF akan segera tersedia');
-    }
-
-    /**
-     * Format actions for display
-     */
-    function formatActions(actions, isLongTerm = false) {
-        if (!Array.isArray(actions) || actions.length === 0) {
-            return '  No specific actions defined.';
-        }
-
-        let formatted = '';
-        actions.forEach((item, idx) => {
-            if (isLongTerm) {
-                formatted += `\n${idx + 1}. ${item.initiative || item.action}\n`;
-                if (item.resources) formatted += `   Resources: ${item.resources}\n`;
-                if (item.success_metrics) formatted += `   Metrics: ${item.success_metrics}\n`;
-            } else {
-                formatted += `\n${idx + 1}. ${item.action}\n`;
-                if (item.priority) formatted += `   Priority: ${item.priority}\n`;
-                if (item.impact) formatted += `   Impact: ${item.impact}\n`;
-            }
-        });
-        return formatted;
-    }
-
-    /**
-     * Format risks for display
-     */
-    function formatRisks(risks) {
-        if (!Array.isArray(risks) || risks.length === 0) {
-            return '  No major risks identified.';
-        }
-
-        let formatted = '';
-        risks.forEach((item, idx) => {
-            formatted += `\n${idx + 1}. Risk: ${item.risk}\n`;
-            if (item.mitigation) formatted += `   Mitigation: ${item.mitigation}\n`;
-        });
-        return formatted;
-    }
-
-    /**
-     * Show recommendation in modal (can be replaced with actual modal component)
-     */
-    function showRecommendationModal(content) {
-        // Simple implementation - can be upgraded to actual modal
-        const modal = document.createElement('div');
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        `;
-
-        const modalContent = document.createElement('div');
-        modalContent.style.cssText = `
-            background: white;
-            padding: 30px;
-            max-width: 900px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            white-space: pre-wrap;
-            line-height: 1.6;
-        `;
-        modalContent.textContent = content;
-
-        const closeBtn = document.createElement('button');
-        closeBtn.textContent = 'Close';
-        closeBtn.style.cssText = `
-            display: block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        `;
-        closeBtn.onclick = () => modal.remove();
-
-        const downloadBtn = document.createElement('button');
-        downloadBtn.textContent = 'Download as Text';
-        downloadBtn.style.cssText = `
-            display: inline-block;
-            margin-top: 20px;
-            margin-right: 10px;
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        `;
-        downloadBtn.onclick = () => {
-            const element = document.createElement('a');
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-            element.setAttribute('download', 'strategic-recommendation.txt');
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
-        };
-
-        const buttonContainer = document.createElement('div');
-        buttonContainer.style.cssText = 'text-align: center;';
-        buttonContainer.appendChild(downloadBtn);
-        buttonContainer.appendChild(closeBtn);
-
-        modalContent.appendChild(buttonContainer);
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-    }
-});
 </script>
         </div>
     </div>

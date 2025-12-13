@@ -11,6 +11,8 @@ class Project extends CI_Controller {
 		$this->load->model('Auth_model', 'auth');
 		// Load Project_model
 		$this->load->model('Project_model', 'project');
+		// Load subscription helper
+		$this->load->helper('subscription');
 
 		// Check if user is logged in
 		if (!$this->auth->is_logged_in()) {
@@ -46,6 +48,16 @@ class Project extends CI_Controller {
 			}
 
 			$step = $_GET['step'];
+			$user_id = $this->session->userdata('user_id');
+			
+			// Check subscription step access
+			$access_check = can_user_access_step($user_id, $step);
+			if (!$access_check['can_access']) {
+				$this->session->set_flashdata('error', $access_check['reason']);
+				redirect(base_url('project'));
+				return;
+			}
+
 			$data = [
 				'title' => 'Project',
 				'content' => 'projects/'.$step,

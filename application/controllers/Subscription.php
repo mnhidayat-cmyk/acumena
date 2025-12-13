@@ -10,6 +10,7 @@ class Subscription extends CI_Controller {
 		$this->load->model('Auth_model', 'auth');
 		$this->load->model('User_model', 'user');
 		$this->load->model('Subscription_model', 'subscription');
+		$this->load->helper('subscription');
 
 		// Check if user is logged in
 		if (!$this->auth->is_logged_in()) {
@@ -20,13 +21,31 @@ class Subscription extends CI_Controller {
 		
 	public function index()
 	{
-        $this->subscription->auto_renew_user($this->session->userdata('user_id'));
+        $user_id = $this->session->userdata('user_id');
+        $this->subscription->auto_renew_user($user_id);
+        
+        // Get quota information
+        $quota_info = get_user_remaining_quota($user_id);
+        $plan = get_user_subscription_plan($user_id);
+        
+        // If no plan, use default
+        if (!$plan) {
+            $plan = $this->subscription->get_subscription_by_id(1);
+        }
+        
+        // Get project count
+        $this->load->model('Project_model');
+        $project_count = $this->Project_model->count_projects_by_user_id($user_id);
+        
         $data = [
             'title' => 'Subscription',
 			'content' => 'subscriptions/index',
-			'user'		=> $this->user->get_user('id', $this->session->userdata('user_id')),
-			'subscription' => $this->subscription->get_user_active_subscription($this->session->userdata('user_id')),
-			'invoice_history' => $this->subscription->get_user_invoice_history($this->session->userdata('user_id')),
+			'user'		=> $this->user->get_user('id', $user_id),
+			'subscription' => $this->subscription->get_user_active_subscription($user_id),
+			'invoice_history' => $this->subscription->get_user_invoice_history($user_id),
+			'quota_info' => $quota_info,
+			'plan' => $plan,
+			'project_count' => $project_count,
 			'css' => [],
 			'js' => []
         ];

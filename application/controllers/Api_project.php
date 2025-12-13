@@ -6,6 +6,9 @@ class Api_project extends CI_Controller {
     public function __construct() {
         parent::__construct();
         
+        // Load subscription helper
+        $this->load->helper('subscription');
+        
         // Set JSON response headers
         header('Content-Type: application/json');
         
@@ -289,6 +292,21 @@ class Api_project extends CI_Controller {
                 }
             } else {
                 // Create new project
+                // Check subscription project limit
+                $user_id = $this->session->userdata('user_id');
+                $create_check = can_user_create_project($user_id);
+                
+                if (!$create_check['can_create']) {
+                    http_response_code(403);
+                    echo json_encode([
+                        'success' => false,
+                        'message' => $create_check['reason'],
+                        'current' => $create_check['current'],
+                        'limit' => $create_check['limit']
+                    ]);
+                    return;
+                }
+                
                 $project_uuid = generate_uuid();
                 $project_data['uuid'] = $project_uuid;
                 $project_data['user_id'] = $user_id;
@@ -697,9 +715,40 @@ class Api_project extends CI_Controller {
             $ai_response = $this->call_ai_for_recommendation($ai_prompt);
 
             if ($ai_response) {
+                // LANGSUNG SIMPAN KE DATABASE SETELAH GENERATE (OTOMATIS)
+                try {
+                    $save_data = [
+                        'project_id' => $project['id'],
+                        'strategic_theme' => $ai_response['strategic_theme'] ?? '',
+                        'alignment_with_position' => $ai_response['alignment_with_position'] ?? '',
+                        'short_term_actions' => json_encode($ai_response['short_term_actions'] ?? []),
+                        'long_term_actions' => json_encode($ai_response['long_term_actions'] ?? []),
+                        'resource_implications' => json_encode($ai_response['resource_implications'] ?? []),
+                        'risk_mitigation' => json_encode($ai_response['risk_mitigation'] ?? []),
+                        'ife_score' => (float)$ife_score,
+                        'efe_score' => (float)$efe_score,
+                        'quadrant' => $quadrant,
+                        'is_active' => 1
+                    ];
+
+                    // Deactivate all previous recommendations for this project
+                    $this->db
+                        ->where('project_id', $project['id'])
+                        ->where('is_active', 1)
+                        ->update('strategic_recommendations', ['is_active' => 0]);
+
+                    // Insert new recommendation (always insert, never update)
+                    $this->db->insert('strategic_recommendations', $save_data);
+                    $save_message = 'Rekomendasi baru berhasil disimpan ke database (versi lama dinonaktifkan)';
+
+                } catch (Exception $save_e) {
+                    log_message('error', 'Error saving recommendation: ' . $save_e->getMessage());
+                    $save_message = 'Dihasilkan namun gagal menyimpan ke database';
+                }
+
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Final Strategic Recommendation generated successfully',
+                    'message' => 'Final Strategic Recommendation generated successfully - ' . $save_message,
                     'data' => [
                         'company_profile' => $company_profile,
                         'ie_matrix_position' => [
@@ -729,7 +778,7 @@ class Api_project extends CI_Controller {
     }
 
     /**
-     * Save recommendation to database
+     * Save recommendation to database (FALLBACK - jika belum disimpan otomatis saat generate)
      * Endpoint: POST /api/project/save-recommendation
      */
     public function save_recommendation() {
@@ -785,9 +834,6 @@ class Api_project extends CI_Controller {
                 'quadrant' => $recommendation_data['ie_matrix_position']['quadrant'] ?? ''
             ];
 
-            // Load recommendation model
-            $this->load->model('Strategic_recommendation_model', 'recommendationModel');
-
             // Check if already exists - if yes, update; if no, insert
             $existing = $this->db
                 ->where('project_id', $save_data['project_id'])
@@ -816,6 +862,93 @@ class Api_project extends CI_Controller {
             echo json_encode([
                 'success' => false,
                 'message' => 'Error saving recommendation: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Get Final Strategic Recommendation for a project
+     * Endpoint: GET /api/project/get-recommendation?uuid=...
+     */
+    public function get_recommendation() {
+        if ($this->input->method() !== 'get') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            return;
+        }
+
+        $user_id = $this->session->userdata('user_id');
+        $project_uuid = $this->input->get('uuid');
+
+        if (!$project_uuid) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'project_uuid is required']);
+            return;
+        }
+
+        // Verify project ownership
+        $project = $this->project->get_project_by_uuid($project_uuid, $user_id);
+        if (!$project) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Project not found or access denied']);
+            return;
+        }
+
+        try {
+            // Get recommendation from database (only active ones)
+            $recommendation = $this->db
+                ->where('project_id', $project['id'])
+                ->where('is_active', 1)
+                ->order_by('created_at', 'DESC')  // Get most recent active recommendation
+                ->get('strategic_recommendations')
+                ->row_array();
+
+            if (!$recommendation) {
+                // No recommendation found yet
+                http_response_code(200);
+                echo json_encode([
+                    'success' => true,
+                    'found' => false,
+                    'message' => 'No recommendation found for this project'
+                ]);
+                return;
+            }
+
+            // Parse JSON columns back to arrays
+            $recommendation['short_term_actions'] = json_decode($recommendation['short_term_actions'], true) ?? [];
+            $recommendation['long_term_actions'] = json_decode($recommendation['long_term_actions'], true) ?? [];
+            $recommendation['resource_implications'] = json_decode($recommendation['resource_implications'], true) ?? [];
+            $recommendation['risk_mitigation'] = json_decode($recommendation['risk_mitigation'], true) ?? [];
+
+            // Get company profile for display
+            $company_profile = [
+                'company_name' => $project['company_name'],
+                'industry' => $project['industry'],
+                'vision' => $project['vision'],
+                'mission' => $project['mission'],
+                'description' => $project['description']
+            ];
+
+            http_response_code(200);
+            echo json_encode([
+                'success' => true,
+                'found' => true,
+                'data' => [
+                    'recommendation' => $recommendation,
+                    'company_profile' => $company_profile,
+                    'ie_matrix_position' => [
+                        'ife_score' => (float)$recommendation['ife_score'],
+                        'efe_score' => (float)$recommendation['efe_score'],
+                        'quadrant' => $recommendation['quadrant']
+                    ]
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error fetching recommendation: ' . $e->getMessage()
             ]);
         }
     }
@@ -921,7 +1054,7 @@ ANALISIS IE MATRIX:
 
 {$strategies_text}
 
-Buatlah rekomendasi terstruktur yang mencakup:
+Buatlah rekomendasi terstruktur dalam JSON yang mencakup:
 
 1. TEMA STRATEGIS UTAMA
    - Arah strategis utama (1-2 kalimat)
@@ -947,7 +1080,7 @@ Buatlah rekomendasi terstruktur yang mencakup:
    - Risiko kunci dalam strategi ini
    - Pendekatan mitigasi
 
-Formatkan respons sebagai JSON yang valid dengan field-field ini (dalam BAHASA INDONESIA):
+OUTPUT HANYA JSON (TIDAK BOLEH ADA TEKS LAIN):
 {
   "strategic_theme": "...",
   "alignment_with_position": "...",
@@ -961,7 +1094,11 @@ Formatkan respons sebagai JSON yang valid dengan field-field ini (dalam BAHASA I
   "risk_mitigation": [{"risk": "...", "mitigation": "..."}]
 }
 
-PENTING: Semua teks dalam JSON HARUS dalam BAHASA INDONESIA yang baik dan profesional.
+PENTING:
+- HANYA output JSON, TIDAK boleh ada teks penjelasan sebelum atau sesudah
+- Semua teks HARUS dalam BAHASA INDONESIA
+- Pastikan JSON valid dan dapat di-parse
+- Jangan tambahkan ```json atau markdown, hanya raw JSON
 PROMPT;
 
         return $prompt;
@@ -1025,144 +1162,88 @@ PROMPT;
      */
     private function call_ai_for_recommendation($prompt) {
         try {
-            // Use existing AI helper function
-            // Try Gemini first, then fallback
-            if (function_exists('gemini_call_json')) {
-                $schema = [
-                    "type" => "object",
-                    "properties" => [
-                        "strategic_theme" => [
-                            "type" => "string",
-                            "description" => "Main strategic direction and alignment with company vision"
-                        ],
-                        "alignment_with_position" => [
-                            "type" => "string",
-                            "description" => "How strategy aligns with IE Matrix position"
-                        ],
-                        "short_term_actions" => [
-                            "type" => "array",
-                            "items" => [
-                                "type" => "object",
-                                "properties" => [
-                                    "action" => ["type" => "string"],
-                                    "priority" => ["type" => "string"],
-                                    "impact" => ["type" => "string"]
-                                ],
-                                "required" => ["action", "priority", "impact"]
-                            ],
-                            "description" => "Short-term action items (3-6 months)"
-                        ],
-                        "long_term_actions" => [
-                            "type" => "array",
-                            "items" => [
-                                "type" => "object",
-                                "properties" => [
-                                    "initiative" => ["type" => "string"],
-                                    "resources" => ["type" => "string"],
-                                    "success_metrics" => ["type" => "string"]
-                                ],
-                                "required" => ["initiative", "resources", "success_metrics"]
-                            ],
-                            "description" => "Long-term strategic initiatives (1-3 years)"
-                        ],
-                        "resource_implications" => [
+            // Define schema untuk JSON structured output
+            $schema = [
+                "type" => "object",
+                "properties" => [
+                    "strategic_theme" => [
+                        "type" => "string",
+                        "description" => "Main strategic direction and alignment with company vision"
+                    ],
+                    "alignment_with_position" => [
+                        "type" => "string",
+                        "description" => "How strategy aligns with IE Matrix position"
+                    ],
+                    "short_term_actions" => [
+                        "type" => "array",
+                        "items" => [
                             "type" => "object",
                             "properties" => [
-                                "budget_allocation" => ["type" => "string"],
-                                "key_roles" => ["type" => "string"],
-                                "skill_development" => ["type" => "string"]
+                                "action" => ["type" => "string"],
+                                "priority" => ["type" => "string"],
+                                "impact" => ["type" => "string"]
                             ],
-                            "required" => ["budget_allocation", "key_roles", "skill_development"],
-                            "description" => "Resource and budget implications"
+                            "required" => ["action", "priority", "impact"]
                         ],
-                        "risk_mitigation" => [
-                            "type" => "array",
-                            "items" => [
-                                "type" => "object",
-                                "properties" => [
-                                    "risk" => ["type" => "string"],
-                                    "mitigation" => ["type" => "string"]
-                                ],
-                                "required" => ["risk", "mitigation"]
-                            ],
-                            "description" => "Key risks and mitigation strategies"
-                        ]
+                        "description" => "Short-term action items (3-6 months)"
                     ],
-                    "required" => ["strategic_theme", "alignment_with_position", "short_term_actions", "long_term_actions", "resource_implications", "risk_mitigation"]
-                ];
-
-                $result = gemini_call_json($prompt, $schema, 'gemini-2.5-flash', 0.2, 2000);
-                return $result;
-            } elseif (function_exists('sumopod_call_json')) {
-                $schema = [
-                    "type" => "object",
-                    "properties" => [
-                        "strategic_theme" => [
-                            "type" => "string",
-                            "description" => "Main strategic direction and alignment with company vision"
-                        ],
-                        "alignment_with_position" => [
-                            "type" => "string",
-                            "description" => "How strategy aligns with IE Matrix position"
-                        ],
-                        "short_term_actions" => [
-                            "type" => "array",
-                            "items" => [
-                                "type" => "object",
-                                "properties" => [
-                                    "action" => ["type" => "string"],
-                                    "priority" => ["type" => "string"],
-                                    "impact" => ["type" => "string"]
-                                ],
-                                "required" => ["action", "priority", "impact"]
-                            ],
-                            "description" => "Short-term action items (3-6 months)"
-                        ],
-                        "long_term_actions" => [
-                            "type" => "array",
-                            "items" => [
-                                "type" => "object",
-                                "properties" => [
-                                    "initiative" => ["type" => "string"],
-                                    "resources" => ["type" => "string"],
-                                    "success_metrics" => ["type" => "string"]
-                                ],
-                                "required" => ["initiative", "resources", "success_metrics"]
-                            ],
-                            "description" => "Long-term strategic initiatives (1-3 years)"
-                        ],
-                        "resource_implications" => [
+                    "long_term_actions" => [
+                        "type" => "array",
+                        "items" => [
                             "type" => "object",
                             "properties" => [
-                                "budget_allocation" => ["type" => "string"],
-                                "key_roles" => ["type" => "string"],
-                                "skill_development" => ["type" => "string"]
+                                "initiative" => ["type" => "string"],
+                                "resources" => ["type" => "string"],
+                                "success_metrics" => ["type" => "string"]
                             ],
-                            "required" => ["budget_allocation", "key_roles", "skill_development"],
-                            "description" => "Resource and budget implications"
+                            "required" => ["initiative", "resources", "success_metrics"]
                         ],
-                        "risk_mitigation" => [
-                            "type" => "array",
-                            "items" => [
-                                "type" => "object",
-                                "properties" => [
-                                    "risk" => ["type" => "string"],
-                                    "mitigation" => ["type" => "string"]
-                                ],
-                                "required" => ["risk", "mitigation"]
-                            ],
-                            "description" => "Key risks and mitigation strategies"
-                        ]
+                        "description" => "Long-term strategic initiatives (1-3 years)"
                     ],
-                    "required" => ["strategic_theme", "alignment_with_position", "short_term_actions", "long_term_actions", "resource_implications", "risk_mitigation"]
-                ];
+                    "resource_implications" => [
+                        "type" => "object",
+                        "properties" => [
+                            "budget_allocation" => ["type" => "string"],
+                            "key_roles" => ["type" => "string"],
+                            "skill_development" => ["type" => "string"]
+                        ],
+                        "required" => ["budget_allocation", "key_roles", "skill_development"],
+                        "description" => "Resource and budget implications"
+                    ],
+                    "risk_mitigation" => [
+                        "type" => "array",
+                        "items" => [
+                            "type" => "object",
+                            "properties" => [
+                                "risk" => ["type" => "string"],
+                                "mitigation" => ["type" => "string"]
+                            ],
+                            "required" => ["risk", "mitigation"]
+                        ],
+                        "description" => "Key risks and mitigation strategies"
+                    ]
+                ],
+                "required" => ["strategic_theme", "alignment_with_position", "short_term_actions", "long_term_actions", "resource_implications", "risk_mitigation"]
+            ];
 
+            // Try Sumopod first (GPT-4o-mini is more reliable)
+            if (function_exists('sumopod_call_json')) {
                 $result = sumopod_call_json($prompt, $schema, 'gpt-4o-mini', 0.2, 2000);
-                return $result;
-            } else {
-                log_message('error', 'No AI service available for recommendation generation');
-                return false;
+                if ($result) {
+                    return $result;
+                }
             }
+
+            // Fallback to Gemini if Sumopod fails
+            if (function_exists('gemini_call_json')) {
+                $result = gemini_call_json($prompt, $schema, 'gemini-2.5-flash', 0.2, 2000);
+                if ($result) {
+                    return $result;
+                }
+            }
+
+            log_message('error', 'No AI service available for recommendation generation');
+            return false;
 
         } catch (Exception $e) {
             log_message('error', 'AI recommendation error: ' . $e->getMessage());

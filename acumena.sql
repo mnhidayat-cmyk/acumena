@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 11, 2025 at 10:39 PM
+-- Generation Time: Dec 12, 2025 at 06:56 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.2.29
 
@@ -111,7 +111,17 @@ INSERT INTO `ai_pair_filtered` (`id`, `run_id`, `project_id`, `pair_type`, `left
 (62, 15, 3, 'S-O', 36, 43, 'Harga terjangkau dengan kualitas semi-butik', 'Pertumbuhan brand fashion lokal & UMKM meningkat pesat', '0.7200', '0.5000', '0.5000', '2025-11-19 01:26:12'),
 (63, 15, 3, 'S-O', 37, 44, 'Minimum order kecil (mulai dari 6 pcs)', 'Konsumen mencari vendor CMT yg amanah & mudah komunikasi', '0.7200', '0.5000', '0.5000', '2025-11-19 01:26:12'),
 (64, 15, 3, 'S-O', 38, 43, 'Komunikasi responsif & fleksibel', 'Pertumbuhan brand fashion lokal & UMKM meningkat pesat', '0.4800', '0.5000', '0.4333', '2025-11-19 01:26:12'),
-(65, 15, 3, 'S-O', 36, 44, 'Harga terjangkau dengan kualitas semi-butik', 'Konsumen mencari vendor CMT yg amanah & mudah komunikasi', '0.3600', '0.5000', '0.4000', '2025-11-19 01:26:12');
+(65, 15, 3, 'S-O', 36, 44, 'Harga terjangkau dengan kualitas semi-butik', 'Konsumen mencari vendor CMT yg amanah & mudah komunikasi', '0.3600', '0.5000', '0.4000', '2025-11-19 01:26:12'),
+(66, 16, 3, 'S-O', 37, 43, 'Minimum order kecil (mulai dari 6 pcs)', 'Pertumbuhan brand fashion lokal & UMKM meningkat pesat', '1.4400', '0.5000', '0.7000', '2025-12-11 23:14:19'),
+(67, 16, 3, 'S-O', 36, 43, 'Harga terjangkau dengan kualitas semi-butik', 'Pertumbuhan brand fashion lokal & UMKM meningkat pesat', '0.7200', '0.5000', '0.5000', '2025-12-11 23:14:19'),
+(68, 16, 3, 'S-O', 37, 44, 'Minimum order kecil (mulai dari 6 pcs)', 'Konsumen mencari vendor CMT yg amanah & mudah komunikasi', '0.7200', '0.5000', '0.5000', '2025-12-11 23:14:19'),
+(69, 16, 3, 'S-O', 38, 43, 'Komunikasi responsif & fleksibel', 'Pertumbuhan brand fashion lokal & UMKM meningkat pesat', '0.4800', '0.5000', '0.4333', '2025-12-11 23:14:19'),
+(70, 16, 3, 'S-O', 36, 44, 'Harga terjangkau dengan kualitas semi-butik', 'Konsumen mencari vendor CMT yg amanah & mudah komunikasi', '0.3600', '0.5000', '0.4000', '2025-12-11 23:14:19'),
+(71, 17, 1, 'S-O', 25, 55, 'Customisasi Product', 'Kemungkinan membuka workshop kedua atau tim sales lapangan untuk memperluas cak…', '0.3200', '0.5000', '0.7000', '2025-12-11 23:22:13'),
+(72, 17, 1, 'S-O', 31, 55, 'Jumlah minimal order rendah (12pcs)', 'Kemungkinan membuka workshop kedua atau tim sales lapangan untuk memperluas cak…', '0.1600', '0.5000', '0.5000', '2025-12-11 23:22:13'),
+(73, 17, 1, 'S-O', 32, 55, 'Pekerja Berpengalaman', 'Kemungkinan membuka workshop kedua atau tim sales lapangan untuk memperluas cak…', '0.1600', '0.5000', '0.5000', '2025-12-11 23:22:13'),
+(74, 17, 1, 'S-O', 33, 55, 'Proses produksi dilakukan di satu lokasi terpusat', 'Kemungkinan membuka workshop kedua atau tim sales lapangan untuk memperluas cak…', '0.1600', '0.5000', '0.5000', '2025-12-11 23:22:13'),
+(75, 17, 1, 'S-O', 25, 52, 'Customisasi Product', 'Pemanfaatan AI & otomasi (n8n + OpenAI) bisa mengurangi biaya operasional dan m…', '0.1200', '0.5000', '0.4500', '2025-12-11 23:22:13');
 
 -- --------------------------------------------------------
 
@@ -195,7 +205,19 @@ INSERT INTO `ai_strategy` (`id`, `run_id`, `project_id`, `pair_type`, `code`, `s
 (83, 15, 3, 'S-O', 'SO3', 'Gunakan minimum order kecil untuk menarik konsumen yang mencari vendor CMT.', '0.5000', '2025-11-19 01:26:19', 1),
 (84, 15, 3, 'S-O', 'SO4', 'Tingkatkan komunikasi responsif untuk mendukung pertumbuhan brand lokal.', '0.4330', '2025-11-19 01:26:19', 1),
 (85, 15, 3, 'S-O', 'SO5', 'Tawarkan kualitas semi-butik dengan harga terjangkau untuk UMKM.', '0.4000', '2025-11-19 01:26:19', 1),
-(86, 15, 3, 'S-O', 'SO6', 'Fokus pada komunikasi yang mudah untuk menarik lebih banyak klien.', '0.3000', '2025-11-19 01:26:19', 1);
+(86, 15, 3, 'S-O', 'SO6', 'Fokus pada komunikasi yang mudah untuk menarik lebih banyak klien.', '0.3000', '2025-11-19 01:26:19', 1),
+(87, 16, 3, 'S-O', 'SO1', 'Manfaatkan minimum order kecil untuk menarik brand fashion lokal.', '0.7000', '2025-12-11 23:14:22', 1),
+(88, 16, 3, 'S-O', 'SO2', 'Tawarkan harga terjangkau untuk mendukung UMKM yang berkembang.', '0.5000', '2025-12-11 23:14:22', 1),
+(89, 16, 3, 'S-O', 'SO3', 'Sediakan minimum order kecil untuk vendor CMT yang amanah.', '0.5000', '2025-12-11 23:14:22', 1),
+(90, 16, 3, 'S-O', 'SO4', 'Tingkatkan komunikasi responsif untuk menarik brand fashion lokal.', '0.4330', '2025-12-11 23:14:22', 1),
+(91, 16, 3, 'S-O', 'SO5', 'Tawarkan kualitas semi-butik dengan harga terjangkau untuk UMKM.', '0.4000', '2025-12-11 23:14:22', 1),
+(92, 16, 3, 'S-O', 'SO6', 'Fokus pada komunikasi yang fleksibel untuk membangun kepercayaan.', '0.3000', '2025-12-11 23:14:22', 1),
+(93, 17, 1, 'S-O', 'SO1', 'Manfaatkan customisasi produk untuk menarik lebih banyak pelanggan di workshop kedua.', '0.7000', '2025-12-11 23:22:17', 1),
+(94, 17, 1, 'S-O', 'SO2', 'Tawarkan jumlah minimal order rendah untuk meningkatkan penjualan di workshop kedua.', '0.5000', '2025-12-11 23:22:17', 1),
+(95, 17, 1, 'S-O', 'SO3', 'Gunakan pekerja berpengalaman untuk meningkatkan kualitas layanan di workshop kedua.', '0.5000', '2025-12-11 23:22:17', 1),
+(96, 17, 1, 'S-O', 'SO4', 'Optimalkan proses produksi terpusat untuk mendukung ekspansi ke workshop kedua.', '0.5000', '2025-12-11 23:22:17', 1),
+(97, 17, 1, 'S-O', 'SO5', 'Implementasikan AI untuk mengurangi biaya operasional dan meningkatkan efisiensi.', '0.4500', '2025-12-11 23:22:17', 1),
+(98, 17, 1, 'S-O', 'SO6', 'Kembangkan tim sales lapangan untuk memperluas jangkauan pasar secara efektif.', '0.4000', '2025-12-11 23:22:17', 1);
 
 -- --------------------------------------------------------
 
@@ -270,9 +292,9 @@ CREATE TABLE `projects` (
 --
 
 INSERT INTO `projects` (`id`, `uuid`, `user_id`, `company_name`, `industry`, `description`, `vision`, `mission`, `date_created`, `last_update`, `is_deleted`) VALUES
-(1, 'eaf48476-e75b-4edf-a7b0-1c421d6c5e58', 1, 'Sevencols', 'Garment', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', 'asd', 'asdss', '2025-10-24 23:25:49', '2025-10-28 13:41:13', NULL),
+(1, 'eaf48476-e75b-4edf-a7b0-1c421d6c5e58', 1, 'Sevencols', 'Garment', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', 'Menjadi konveksi terpercaya di Indonesia yang menghadirkan produk apparel berkualitas, tepat waktu, dan ramah pelanggan, dengan layanan yang cepat, mudah, dan hasil yang selalu konsisten.', 'Menghadirkan Produk Berkualitas Tinggi\nMenggunakan bahan terbaik, teknik jahit rapi, serta standar kualitas yang konsisten untuk setiap pesanan, baik dalam jumlah kecil maupun besar.\n\nMenyediakan Layanan Desain Gratis & Profesional\nMembantu pelanggan mewujudkan identitas brand, komunitas, atau tim melalui layanan desain yang kreatif dan responsif.\n\nMembangun Pengalaman Pelanggan yang Nyaman\nMemberikan proses pemesanan yang mudah, komunikasi cepat, dan layanan ramah agar setiap pelanggan merasa terbantu dari awal hingga pesanan selesai.\n\nTepat Waktu Dalam Produksi & Pengiriman\nMengoptimalkan proses produksi dan manajemen waktu agar semua pesanan selesai sesuai jadwal yang disepakati.\n\nMengembangkan Tim yang Terampil & Inovatif\nMenumbuhkan SDM yang kompeten, kreatif, dan selalu memperbarui keterampilan di dunia produksi dan desain.\n\nMendukung Komunitas, UMKM, dan Pelaku Brand Lokal\nMenjadi partner terpercaya dalam pembuatan merchandise, seragam, jersey, ataupun apparel untuk kegiatan bisnis, organisasi, sekolah, dan komunitas.\n\nMenjaga Kejujuran & Profesionalitas\nMengedepankan transparansi harga, keterbukaan informasi, dan komunikasi yang jelas dalam setiap tahap kerja.', '2025-10-24 23:25:49', '2025-12-11 16:16:28', NULL),
 (2, '9b0fbd55-667a-4e90-a320-d8b9acc12bde', 1, 'Bright Site', 'Technology', 'BrightSite adalah perusahaan pengembang website dan aplikasi yang berfokus pada penyediaan solusi digital untuk mendukung efisiensi, produktivitas, dan pertumbuhan bisnis.Kami percaya bahwa teknologi bukan hanya alat, tetapi fondasi penting untuk membangun daya saing di era digital.\n\nDengan tim yang berpengalaman di bidang desain, pengembangan sistem, dan transformasi digital, BrightSite menghadirkan layanan yang menggabungkan kreativitas, fungsionalitas, dan hasil nyata bagi klien kami.', 'Menjadi mitra digital terpercaya bagi bisnis dan organisasi yang ingin bertransformasi melalui teknologi.', '- Menghadirkan solusi digital yang efektif, aman, dan mudah digunakan.\n- Meningkatkan efisiensi bisnis melalui pengembangan sistem berbasis web dan aplikasi.\n- Memberikan layanan konsultatif dan kolaboratif untuk memahami kebutuhan klien secara mendalam.\n- Menjaga kualitas, ketepatan waktu, dan inovasi dalam setiap proyek.', '2025-10-28 05:26:05', '2025-11-17 22:33:07', NULL),
-(3, '09e4261e-1672-41f4-aaeb-eaf253331889', 1, 'Pengen Jahit', 'Konveksi', 'Sebuah pergerakan kecil dari ujung timur Malang, dengan mimpi besar untuk tumbuh bersama. Dari ruang-ruang sederhana dan tangan-tangan perempuan yang terampil,\nkami menghadirkan karya yang bukan sekadar pakaian - tapi wujud dari ketulusan, kolaborasi, dan harapan untuk bertumbuh bersama para pelaku usaha di seluruh Indonesia.', 'Menjadi mitra produksi terpercaya bagi brand-brand lokal Indonesia, dengan menghadirkan hasil jahitan berkualitas dan memberikan dampak nyata bagi pemberdayaan perempuan di sekitar kami.', '- Memberikan layanan CMT (Cut, Make, Trim) dengan kualitas butik namun harga terjangkau.\n- Membantu brand lokal tumbuh dan berkembang bersama kami.\n- Memberdayakan perempuan di lingkungan sekitar melalui lapangan kerja dan pelatihan keterampilan menjahit.\n- Menjaga konsistensi, ketepatan waktu, dan detail dalam setiap hasil produksi.', '2025-10-28 05:30:20', '2025-12-11 15:28:22', NULL);
+(3, '09e4261e-1672-41f4-aaeb-eaf253331889', 1, 'Pengen Jahit', 'Konveksi', 'Sebuah pergerakan kecil dari ujung timur Malang, dengan mimpi besar untuk tumbuh bersama. Dari ruang-ruang sederhana dan tangan-tangan perempuan yang terampil,\nkami menghadirkan karya yang bukan sekadar pakaian - tapi wujud dari ketulusan, kolaborasi, dan harapan untuk bertumbuh bersama para pelaku usaha di seluruh Indonesia.', 'Menjadi mitra produksi terpercaya bagi brand-brand lokal Indonesia, dengan menghadirkan hasil jahitan berkualitas dan memberikan dampak nyata bagi pemberdayaan perempuan di sekitar kami.', '- Memberikan layanan CMT (Cut, Make, Trim) dengan kualitas butik namun harga terjangkau.\n- Membantu brand lokal tumbuh dan berkembang bersama kami.\n- Memberdayakan perempuan di lingkungan sekitar melalui lapangan kerja dan pelatihan keterampilan menjahit.\n- Menjaga konsistensi, ketepatan waktu, dan detail dalam setiap hasil produksi.', '2025-10-28 05:30:20', '2025-12-11 16:27:42', NULL);
 
 -- --------------------------------------------------------
 
@@ -312,7 +334,35 @@ INSERT INTO `project_ai_generation_run` (`id`, `project_id`, `pair_type`, `stage
 (12, 3, 'S-O', 'failed', 'gemini-1.5-flash', '0.20', 1000, 0, '2025-11-17 08:43:59', '2025-11-18 05:34:02'),
 (13, 3, 'S-O', 'failed', 'gemini-1.5-flash', '0.20', 1000, 0, '2025-11-18 05:34:02', '2025-11-18 05:37:13'),
 (14, 3, 'S-O', 'strategy_done', 'gemini-1.5-flash', '0.20', 1000, 0, '2025-11-18 05:37:13', '2025-11-19 01:26:01'),
-(15, 3, 'S-O', 'strategy_done', 'gemini-1.5-flash', '0.20', 1000, 1, '2025-11-19 01:26:01', NULL);
+(15, 3, 'S-O', 'strategy_done', 'gemini-1.5-flash', '0.20', 1000, 0, '2025-11-19 01:26:01', '2025-12-11 23:14:09'),
+(16, 3, 'S-O', 'strategy_done', 'gemini-1.5-flash', '0.20', 1000, 1, '2025-12-11 23:14:09', NULL),
+(17, 1, 'S-O', 'strategy_done', 'gemini-1.5-flash', '0.20', 1000, 1, '2025-12-11 23:22:03', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `project_prioritized_strategies`
+--
+
+CREATE TABLE `project_prioritized_strategies` (
+  `id` bigint UNSIGNED NOT NULL COMMENT 'Auto-increment ID',
+  `uuid` char(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'UUID v4 untuk API reference',
+  `project_id` bigint UNSIGNED NOT NULL COMMENT 'Link ke projects table',
+  `ai_strategy_id` bigint UNSIGNED DEFAULT NULL COMMENT 'Link ke ai_strategy table (nullable)',
+  `created_by_user_id` bigint UNSIGNED NOT NULL COMMENT 'User yang create/save',
+  `pair_type` enum('S-O','W-O','S-T','W-T') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tipe pasangan SWOT',
+  `strategy_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Kode short: SO1, ST2, WO3, WT4',
+  `strategy_statement` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Isi strategi lengkap',
+  `priority_rank` int NOT NULL DEFAULT '1' COMMENT 'Urutan prioritas (1=tertinggi)',
+  `priority_score` decimal(5,4) DEFAULT NULL COMMENT 'Score dari AI (0.0000-1.0000)',
+  `status` enum('draft','approved','in_progress','completed','archived') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'draft' COMMENT 'Status eksekusi strategi',
+  `selected_by_user` tinyint(1) DEFAULT '0' COMMENT 'User explicitly pilih?',
+  `selection_justification` text COLLATE utf8mb4_unicode_ci COMMENT 'Alasan user memilih strategy ini',
+  `internal_notes` text COLLATE utf8mb4_unicode_ci COMMENT 'Notes internal untuk tim',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Waktu dibuat',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Terakhir diupdate',
+  `is_deleted` timestamp NULL DEFAULT NULL COMMENT 'Soft delete timestamp'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabel untuk menyimpan prioritized strategies per project';
 
 -- --------------------------------------------------------
 
@@ -337,45 +387,40 @@ CREATE TABLE `project_swot` (
 --
 
 INSERT INTO `project_swot` (`id`, `project_id`, `description`, `category`, `weight`, `rating`, `date_created`, `last_update`, `is_deleted`) VALUES
-(25, 1, 'Customisasi Product', 'S', '0.30', 4, '2025-10-25 01:19:37', '2025-10-25 22:56:16', NULL),
+(25, 1, 'Customisasi Product', 'S', '0.20', 4, '2025-10-25 01:19:37', '2025-12-11 16:19:40', NULL),
 (26, 1, 'S2', 'S', NULL, NULL, '2025-10-25 01:19:37', '2025-10-25 08:20:02', '2025-10-25 01:20:02'),
-(27, 1, 'Marketing kurang terstruktur dan konsisten', 'W', '0.10', 1, '2025-10-25 01:19:37', '2025-10-25 22:56:16', NULL),
-(28, 1, 'Tender Perusahaan dan Instansi', 'O', '0.90', 1, '2025-10-25 01:19:37', '2025-10-25 04:05:40', NULL),
-(29, 1, 'banyak bisnis serupa bermunculan', 'T', '0.10', 2, '2025-10-25 01:19:37', '2025-10-25 04:05:40', NULL),
+(27, 1, 'Marketing kurang terstruktur dan konsisten', 'W', '0.10', 1, '2025-10-25 01:19:37', '2025-12-11 16:19:40', NULL),
+(28, 1, 'Tender Perusahaan dan Instansi', 'O', '0.10', 1, '2025-10-25 01:19:37', '2025-12-11 16:21:48', NULL),
+(29, 1, 'banyak bisnis serupa bermunculan', 'T', '0.05', 2, '2025-10-25 01:19:37', '2025-12-11 16:21:48', NULL),
 (30, 1, 'S234', 'S', NULL, NULL, '2025-10-25 01:20:02', '2025-10-25 08:24:27', '2025-10-25 01:24:27'),
-(31, 1, 'Jumlah minimal order rendah (12pcs)', 'S', '0.10', 4, '2025-10-25 22:55:20', '2025-10-25 22:56:16', NULL),
-(32, 1, 'Pekerja Berpengalaman', 'S', '0.10', 4, '2025-10-25 22:55:20', '2025-10-25 22:56:16', NULL),
-(33, 1, 'Proses produksi dilakukan di satu lokasi terpusat', 'S', '0.10', 4, '2025-10-25 22:55:20', '2025-10-25 22:56:16', NULL),
-(34, 1, 'Perubahan tren fashion cepat dan preferensi pelanggan dinamis.', 'T', NULL, NULL, '2025-10-25 22:55:20', '2025-10-26 05:55:20', NULL),
-(35, 1, 'Sebagian besar pekerja sudah memasuki  usia senja', 'T', NULL, NULL, '2025-10-25 22:55:20', '2025-10-26 05:55:20', NULL),
-(36, 3, 'Harga terjangkau dengan kualitas semi-butik', 'S', '0.20', 3, '2025-10-29 06:17:00', '2025-11-17 01:43:03', NULL),
-(37, 3, 'Minimum order kecil (mulai dari 6 pcs)', 'S', '0.30', 4, '2025-10-29 06:17:00', '2025-11-17 01:43:03', NULL),
-(38, 3, 'Komunikasi responsif & fleksibel', 'S', '0.10', 4, '2025-10-29 06:17:00', '2025-11-17 01:43:03', NULL),
-(39, 3, 'Skalabilitas produksi masih terbatas', 'W', '0.10', 1, '2025-10-29 06:17:00', '2025-11-17 01:43:03', NULL),
-(40, 3, 'Cash flow berpotensi terganggu bila pembayaran pelanggan terlambat', 'W', '0.10', 2, '2025-10-29 06:17:00', '2025-11-17 01:43:03', NULL),
-(41, 3, 'bergantung pada brand', 'W', '0.10', 1, '2025-10-29 06:17:00', '2025-11-17 01:43:03', NULL),
-(42, 3, 'pemasaran kurang terstruktur', 'W', '0.10', 1, '2025-10-29 06:17:00', '2025-11-17 01:43:03', NULL),
-(43, 3, 'Pertumbuhan brand fashion lokal & UMKM meningkat pesat', 'O', '0.30', 4, '2025-10-29 06:17:00', '2025-11-12 07:21:41', NULL),
-(44, 3, 'Konsumen mencari vendor CMT yg amanah & mudah komunikasi', 'O', '0.20', 3, '2025-10-29 06:17:00', '2025-11-12 07:21:41', NULL),
-(45, 3, 'Kompetisi sangat ketat', 'T', '0.30', 2, '2025-10-29 06:17:00', '2025-11-12 07:21:41', NULL),
-(46, 3, 'Fluktuasi harga bahan baku', 'T', '0.10', 1, '2025-10-29 06:17:00', '2025-11-12 07:21:41', NULL),
-(47, 3, 'Margin mudah tergerus jika hanya perang harga', 'T', '0.10', 1, '2025-10-29 06:17:00', '2025-11-12 07:21:41', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `project_swot_strategy`
---
-
-CREATE TABLE `project_swot_strategy` (
-  `id` bigint UNSIGNED NOT NULL,
-  `project_id` bigint UNSIGNED NOT NULL,
-  `description` text NOT NULL,
-  `category` enum('SO','ST','WO','WT','main') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `ai_agent` varchar(255) DEFAULT NULL,
-  `date_created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `is_deleted` tinyint(1) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+(31, 1, 'Jumlah minimal order rendah (12pcs)', 'S', '0.10', 4, '2025-10-25 22:55:20', '2025-12-11 16:19:40', NULL),
+(32, 1, 'Pekerja Berpengalaman', 'S', '0.10', 4, '2025-10-25 22:55:20', '2025-12-11 16:19:40', NULL),
+(33, 1, 'Proses produksi dilakukan di satu lokasi terpusat', 'S', '0.10', 4, '2025-10-25 22:55:20', '2025-12-11 16:19:40', NULL),
+(34, 1, 'Perubahan tren fashion cepat dan preferensi pelanggan dinamis.', 'T', '0.03', 1, '2025-10-25 22:55:20', '2025-12-11 16:21:48', NULL),
+(35, 1, 'Sebagian besar pekerja sudah memasuki  usia senja', 'T', '0.10', 1, '2025-10-25 22:55:20', '2025-12-11 16:21:48', NULL),
+(36, 3, 'Harga terjangkau dengan kualitas semi-butik', 'S', '0.20', 3, '2025-10-29 06:17:00', '2025-12-11 16:27:47', NULL),
+(37, 3, 'Minimum order kecil (mulai dari 6 pcs)', 'S', '0.30', 4, '2025-10-29 06:17:00', '2025-12-11 16:27:47', NULL),
+(38, 3, 'Komunikasi responsif & fleksibel', 'S', '0.10', 4, '2025-10-29 06:17:00', '2025-12-11 16:27:47', NULL),
+(39, 3, 'Skalabilitas produksi masih terbatas', 'W', '0.10', 1, '2025-10-29 06:17:00', '2025-12-11 16:27:47', NULL),
+(40, 3, 'Cash flow berpotensi terganggu bila pembayaran pelanggan terlambat', 'W', '0.10', 2, '2025-10-29 06:17:00', '2025-12-11 16:27:47', NULL),
+(41, 3, 'bergantung pada brand', 'W', '0.10', 1, '2025-10-29 06:17:00', '2025-12-11 16:27:47', NULL),
+(42, 3, 'pemasaran kurang terstruktur', 'W', '0.10', 1, '2025-10-29 06:17:00', '2025-12-11 16:27:47', NULL),
+(43, 3, 'Pertumbuhan brand fashion lokal & UMKM meningkat pesat', 'O', '0.30', 4, '2025-10-29 06:17:00', '2025-12-11 16:27:49', NULL),
+(44, 3, 'Konsumen mencari vendor CMT yg amanah & mudah komunikasi', 'O', '0.20', 3, '2025-10-29 06:17:00', '2025-12-11 16:27:49', NULL),
+(45, 3, 'Kompetisi sangat ketat', 'T', '0.30', 2, '2025-10-29 06:17:00', '2025-12-11 16:27:49', NULL),
+(46, 3, 'Fluktuasi harga bahan baku', 'T', '0.10', 1, '2025-10-29 06:17:00', '2025-12-11 16:27:49', NULL),
+(47, 3, 'Margin mudah tergerus jika hanya perang harga', 'T', '0.10', 1, '2025-10-29 06:17:00', '2025-12-11 16:27:49', NULL),
+(48, 1, 'Skala produksi belum sebesar pabrik besar, sehingga kapasitas bisa terbatas saat peak season.', 'W', '0.10', 1, '2025-12-11 16:18:38', '2025-12-11 16:19:40', NULL),
+(49, 1, 'Ketergantungan pada pemasok bahan, sehingga jika harga naik atau stok kosong dapat menghambat produksi.', 'W', '0.10', 2, '2025-12-11 16:18:38', '2025-12-11 16:19:40', NULL),
+(50, 1, 'Brand awareness masih dalam tahap berkembang, perlu strategi marketing yang lebih agresif.', 'W', '0.10', 1, '2025-12-11 16:18:38', '2025-12-11 16:19:40', NULL),
+(51, 1, 'Workflow internal mungkin masih manual (meski sedang dikembangkan AI & otomasi).', 'W', '0.10', 2, '2025-12-11 16:18:38', '2025-12-11 16:19:40', NULL),
+(52, 1, 'Pemanfaatan AI & otomasi (n8n + OpenAI) bisa mengurangi biaya operasional dan meningkatkan kecepatan layanan.', 'O', '0.05', 3, '2025-12-11 16:18:38', '2025-12-11 16:21:48', NULL),
+(53, 1, 'Perluasan kemitraan dengan sekolah, kampus, event organizer, dan UMKM sebagai pelanggan langganan.', 'O', '0.05', 3, '2025-12-11 16:18:38', '2025-12-11 16:21:48', NULL),
+(54, 1, 'Pemasaran digital (TikTok, Instagram, Google Business) memiliki potensi besar untuk menjaring 100.000+ leads.', 'O', '0.02', 3, '2025-12-11 16:18:38', '2025-12-11 16:21:48', NULL),
+(55, 1, 'Kemungkinan membuka workshop kedua atau tim sales lapangan untuk memperluas cakupan wilayah.', 'O', '0.10', 4, '2025-12-11 16:18:38', '2025-12-11 16:21:48', NULL),
+(56, 1, 'Ketergantungan pada teknologi printing, jika mesin mengalami gangguan produksi bisa terhambat.', 'T', '0.10', 1, '2025-12-11 16:18:38', '2025-12-11 16:21:48', NULL),
+(57, 1, 'Komplain kualitas/ketidaksesuaian desain jika tidak ada SOP QC yang konsisten.', 'T', '0.20', 1, '2025-12-11 16:18:38', '2025-12-11 16:21:48', NULL),
+(58, 1, 'Pelanggan sensitif terhadap harga, terutama di segmen komunitas dan event organizer.', 'T', '0.20', 1, '2025-12-11 16:18:38', '2025-12-11 16:21:48', NULL);
 
 -- --------------------------------------------------------
 
@@ -413,6 +458,28 @@ INSERT INTO `settings` (`id`, `name`, `value`) VALUES
 (17, 'main_domain', 'http://acumena.test'),
 (18, 'admin_domain', 'http://console-acumena.test'),
 (19, 'sumopod_api_key', 'sk-nZFXZP9AYgyEeJloQi4b-Q');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `strategic_recommendations`
+--
+
+CREATE TABLE `strategic_recommendations` (
+  `id` bigint UNSIGNED NOT NULL,
+  `project_id` bigint UNSIGNED NOT NULL,
+  `strategic_theme` longtext,
+  `alignment_with_position` longtext,
+  `short_term_actions` json DEFAULT NULL,
+  `long_term_actions` json DEFAULT NULL,
+  `resource_implications` json DEFAULT NULL,
+  `risk_mitigation` json DEFAULT NULL,
+  `ife_score` decimal(5,2) DEFAULT NULL,
+  `efe_score` decimal(5,2) DEFAULT NULL,
+  `quadrant` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -679,16 +746,26 @@ ALTER TABLE `project_ai_generation_run`
   ADD KEY `idx_project_pair` (`project_id`,`pair_type`,`created_at`);
 
 --
+-- Indexes for table `project_prioritized_strategies`
+--
+ALTER TABLE `project_prioritized_strategies`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uuid` (`uuid`),
+  ADD KEY `idx_project_id` (`project_id`) COMMENT 'Filter by project',
+  ADD KEY `idx_pair_type` (`pair_type`) COMMENT 'Filter by SWOT type',
+  ADD KEY `idx_status` (`status`) COMMENT 'Filter by status',
+  ADD KEY `idx_priority_rank` (`priority_rank`) COMMENT 'Sort by priority',
+  ADD KEY `idx_ai_strategy_id` (`ai_strategy_id`) COMMENT 'Join dengan ai_strategy',
+  ADD KEY `idx_created_by_user_id` (`created_by_user_id`) COMMENT 'Track by user',
+  ADD KEY `idx_is_deleted` (`is_deleted`) COMMENT 'Filter deleted records',
+  ADD KEY `idx_project_pair_status` (`project_id`,`pair_type`,`status`),
+  ADD KEY `idx_project_priority` (`project_id`,`priority_rank`),
+  ADD KEY `idx_user_created` (`created_by_user_id`,`created_at`);
+
+--
 -- Indexes for table `project_swot`
 --
 ALTER TABLE `project_swot`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `project_id` (`project_id`);
-
---
--- Indexes for table `project_swot_strategy`
---
-ALTER TABLE `project_swot_strategy`
   ADD PRIMARY KEY (`id`),
   ADD KEY `project_id` (`project_id`);
 
@@ -698,6 +775,14 @@ ALTER TABLE `project_swot_strategy`
 ALTER TABLE `settings`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `strategic_recommendations`
+--
+ALTER TABLE `strategic_recommendations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_project_id` (`project_id`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
 -- Indexes for table `subscriptions`
@@ -772,13 +857,13 @@ ALTER TABLE `user_verify`
 -- AUTO_INCREMENT for table `ai_pair_filtered`
 --
 ALTER TABLE `ai_pair_filtered`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `ai_strategy`
 --
 ALTER TABLE `ai_strategy`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 --
 -- AUTO_INCREMENT for table `matrix_ie_quadrant_strategies`
@@ -796,25 +881,31 @@ ALTER TABLE `projects`
 -- AUTO_INCREMENT for table `project_ai_generation_run`
 --
 ALTER TABLE `project_ai_generation_run`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `project_prioritized_strategies`
+--
+ALTER TABLE `project_prioritized_strategies`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Auto-increment ID';
 
 --
 -- AUTO_INCREMENT for table `project_swot`
 --
 ALTER TABLE `project_swot`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
-
---
--- AUTO_INCREMENT for table `project_swot_strategy`
---
-ALTER TABLE `project_swot_strategy`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `strategic_recommendations`
+--
+ALTER TABLE `strategic_recommendations`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `subscriptions`
@@ -887,16 +978,24 @@ ALTER TABLE `projects`
   ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
+-- Constraints for table `project_prioritized_strategies`
+--
+ALTER TABLE `project_prioritized_strategies`
+  ADD CONSTRAINT `fk_ps_ai_strategy_id` FOREIGN KEY (`ai_strategy_id`) REFERENCES `ai_strategy` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_ps_created_by_user_id` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_ps_project_id` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `project_swot`
 --
 ALTER TABLE `project_swot`
   ADD CONSTRAINT `project_swot_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`);
 
 --
--- Constraints for table `project_swot_strategy`
+-- Constraints for table `strategic_recommendations`
 --
-ALTER TABLE `project_swot_strategy`
-  ADD CONSTRAINT `project_swot_strategy_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`);
+ALTER TABLE `strategic_recommendations`
+  ADD CONSTRAINT `strategic_recommendations_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `users`
